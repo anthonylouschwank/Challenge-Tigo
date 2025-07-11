@@ -347,13 +347,6 @@ El motor evalúa mocks en este orden:
 5. **Evaluación de condiciones** específicas
 6. **Selección por puntuación** (score más alto gana)
 
-### Sistema de Puntuación
-
-- Ruta exacta: +50 puntos
-- Ruta con parámetros: +30 puntos
-- Header válido: +10 puntos
-- Condición específica: +20 puntos
-
 ## 👨‍💻 Desarrollo
 
 ### Ejecutar en modo desarrollo
@@ -364,19 +357,6 @@ docker-compose --profile dev up --build
 
 # O sin Docker
 npm run dev
-```
-
-### Ejecutar tests
-
-```bash
-npm test
-```
-
-### Linting
-
-```bash
-npm run lint
-npm run lint:fix
 ```
 
 ### Ver logs en tiempo real
