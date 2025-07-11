@@ -4,10 +4,13 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 require('dotenv').config();
 
-// Importar database manager
+// Importar database manager y controladores
 const dbManager = require('./utils/fileDatabase');
 const configRoutes = require('./routes/configRoutes');
 const MockController = require('./controllers/mockController');
+
+// Importar middlewares personalizados
+const middleware = require('./middleware');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -156,11 +159,7 @@ app.use('*', (req, res, next) => {
   
   if (isConfigMockRoute || isTestRoute || isSystemPath || isRootAndGet) {
     console.log(`❌ System route, returning 404: ${req.originalUrl}`);
-    return res.status(404).json({
-      error: 'Route not found',
-      message: `Cannot ${req.method} ${req.originalUrl}`,
-      timestamp: new Date().toISOString()
-    });
+    return middleware.notFoundHandler(req, res);
   }
   
   console.log(`🎯 Sending to mock engine: ${req.method} ${req.originalUrl}`);
@@ -168,22 +167,9 @@ app.use('*', (req, res, next) => {
   MockController.handleMockRequest(req, res);
 });
 
-// Middleware para manejo de errores
-app.use((err, req, res, next) => {
-  console.error('❌ Unhandled error:', err);
-  console.error('📋 Error stack:', err.stack);
-  console.error('🔗 Request URL:', req.url);
-  console.error('📝 Request method:', req.method);
-  console.error('📦 Request body:', req.body);
-  
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: err.message,
-    timestamp: new Date().toISOString(),
-    url: req.url,
-    method: req.method
-  });
-});
+// Middleware global para manejo de errores (debe ir al final)
+app.use(middleware.errorLogger);
+app.use(middleware.globalErrorHandler);
 
 // Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
