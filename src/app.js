@@ -7,6 +7,7 @@ require('dotenv').config();
 // Importar database manager
 const dbManager = require('./utils/fileDatabase');
 const configRoutes = require('./routes/configRoutes');
+const MockController = require('./controllers/mockController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,8 +30,27 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use('/configure-mock', express.json({ limit: '10mb' }));
 app.use('/test', express.json({ limit: '10mb' }));
 
-// Rutas principales
+// Middleware global para manejar JSON en rutas de mocks (aplicar después de rutas del sistema)
+app.use((req, res, next) => {
+  // Aplicar JSON parsing a todas las rutas que NO son del sistema
+  const systemRoutes = ['/health', '/', '/mock-stats', '/mock-logs'];
+  const isSystemRoute = systemRoutes.includes(req.path) || 
+                       req.path.startsWith('/configure-mock') || 
+                       req.path.startsWith('/test');
+  
+  if (!isSystemRoute && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
+    express.json({ limit: '10mb' })(req, res, next);
+  } else {
+    next();
+  }
+});
+
+// Rutas principales del sistema (estas NO deben ir al motor de matching)
 app.use('/configure-mock', configRoutes);
+
+// Endpoints específicos del sistema
+app.get('/mock-stats', MockController.getMockStats);
+app.delete('/mock-logs', MockController.clearOldLogs);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -122,13 +142,30 @@ app.delete('/test/:id', (req, res) => {
   });
 });
 
-// Middleware para manejar rutas no encontradas
-app.use('*', (req, res) => {
-  res.status(404).json({
-    error: 'Route not found',
-    message: `Cannot ${req.method} ${req.originalUrl}`,
-    timestamp: new Date().toISOString()
-  });
+// IMPORTANTE: Este middleware debe ir DESPUÉS de todas las rutas del sistema
+// Intercepta TODAS las rutas que no son del sistema y las envía al motor de matching
+app.use('*', (req, res, next) => {
+  console.log(`🔍 Checking route: ${req.method} ${req.originalUrl}`);
+  
+  // Rutas del sistema que NO deben ir al motor de matching
+  const systemPaths = ['/health', '/mock-stats', '/mock-logs'];
+  const isConfigMockRoute = req.originalUrl.startsWith('/configure-mock');
+  const isTestRoute = req.originalUrl.startsWith('/test');
+  const isSystemPath = systemPaths.includes(req.originalUrl);
+  const isRootAndGet = req.originalUrl === '/' && req.method === 'GET';
+  
+  if (isConfigMockRoute || isTestRoute || isSystemPath || isRootAndGet) {
+    console.log(`❌ System route, returning 404: ${req.originalUrl}`);
+    return res.status(404).json({
+      error: 'Route not found',
+      message: `Cannot ${req.method} ${req.originalUrl}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  console.log(`🎯 Sending to mock engine: ${req.method} ${req.originalUrl}`);
+  // Para todas las demás rutas, intentar encontrar un mock
+  MockController.handleMockRequest(req, res);
 });
 
 // Middleware para manejo de errores
