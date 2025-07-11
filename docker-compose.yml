@@ -1,0 +1,45 @@
+services:
+  mock-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mock-api-service
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      # Persistir la base de datos SQLite
+      - ./database:/app/database
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=3000
+      - DB_PATH=/app/database/mocks.db
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Para desarrollo con hot-reload
+  mock-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mock-api-dev
+    ports:
+      - "${DEV_PORT:-3001}:3000"
+    volumes:
+      - ./src:/app/src
+      - ./database:/app/database
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_PATH=/app/database/mocks.db
+      - LOG_LEVEL=debug
+    command: npm run dev
+    profiles:
+      - dev
+    restart: unless-stopped
