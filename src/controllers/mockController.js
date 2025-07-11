@@ -12,10 +12,10 @@ class MockController {
       // Usar originalUrl para obtener la ruta completa
       const requestPath = req.originalUrl.split('?')[0]; // Remover query params
       
-      console.log(`\n🎯 Mock request: ${req.method} ${requestPath}`);
-      console.log(`📦 Headers:`, req.headers);
-      console.log(`🔗 Query:`, req.query);
-      console.log(`📄 Body:`, req.body);
+      console.log(`\n Mock request: ${req.method} ${requestPath}`);
+      console.log(`Headers:`, req.headers);
+      console.log(`Query:`, req.query);
+      console.log(`Body:`, req.body);
       
       // Buscar mock que coincida
       const matchingMock = MatchingEngine.findMatchingMocks(
@@ -27,7 +27,7 @@ class MockController {
       );
       
       if (!matchingMock) {
-        console.log(`❌ No mock found for: ${req.method} ${requestPath}`);
+        console.log(`No mock found for: ${req.method} ${requestPath}`);
         return res.status(404).json({
           error: 'Mock Not Found',
           message: `No mock configuration found for ${req.method} ${requestPath}`,
@@ -68,7 +68,7 @@ class MockController {
         executionTime
       );
       
-      console.log(`✅ Mock executed: ${matchingMock.name} (${executionTime}ms)`);
+      console.log(`Mock executed: ${matchingMock.name} (${executionTime}ms)`);
       
       // Enviar respuesta
       res.status(response.statusCode)
@@ -80,7 +80,7 @@ class MockController {
         
     } catch (error) {
       const executionTime = Date.now() - startTime;
-      console.error('❌ Error handling mock request:', error);
+      console.error('Error handling mock request:', error);
       
       res.status(500).json({
         error: 'Mock Execution Error',
@@ -138,7 +138,7 @@ class MockController {
       });
       
     } catch (error) {
-      console.error('❌ Error getting mock stats:', error);
+      console.error('Error getting mock stats:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to retrieve mock statistics',
@@ -185,7 +185,7 @@ class MockController {
       });
       
     } catch (error) {
-      console.error('❌ Error clearing old logs:', error);
+      console.error('Error clearing old logs:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to clear old logs',

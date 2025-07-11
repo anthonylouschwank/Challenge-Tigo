@@ -2,12 +2,12 @@
  * Middleware para manejar errores no capturados
  */
 const globalErrorHandler = (err, req, res, next) => {
-  console.error('❌ Unhandled error:', err);
-  console.error('📋 Error stack:', err.stack);
-  console.error('🔗 Request URL:', req.url);
-  console.error('📝 Request method:', req.method);
-  console.error('📦 Request body:', req.body);
-  console.error('🌐 Request headers:', req.headers);
+  console.error('Unhandled error:', err);
+  console.error('Error stack:', err.stack);
+  console.error('Request URL:', req.url);
+  console.error('Request method:', req.method);
+  console.error('Request body:', req.body);
+  console.error('Request headers:', req.headers);
   
   // Determinar el tipo de error y respuesta apropiada
   let statusCode = 500;
@@ -41,7 +41,7 @@ const globalErrorHandler = (err, req, res, next) => {
  * Middleware para manejar rutas no encontradas del sistema
  */
 const notFoundHandler = (req, res) => {
-  console.log(`❌ System route not found: ${req.method} ${req.originalUrl}`);
+  console.log(`System route not found: ${req.method} ${req.originalUrl}`);
   
   res.status(404).json({
     error: 'Route not found',
@@ -117,7 +117,7 @@ const errorLogger = (err, req, res, next) => {
   };
   
   // En un entorno real, esto se guardaría en un archivo o sistema de logging
-  console.error('📝 Error logged:', JSON.stringify(errorLog, null, 2));
+  console.error('Error logged:', JSON.stringify(errorLog, null, 2));
   
   next(err);
 };

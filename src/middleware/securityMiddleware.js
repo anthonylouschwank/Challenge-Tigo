@@ -29,7 +29,7 @@ const rateLimiter = (windowMs = 15 * 60 * 1000, maxRequests = 1000) => {
     
     // Verificar límite
     if (clientData.count > maxRequests) {
-      console.log(`🚫 Rate limit exceeded for IP: ${clientId}`);
+      console.log(`Rate limit exceeded for IP: ${clientId}`);
       return res.status(429).json({
         error: 'Too Many Requests',
         message: `Rate limit exceeded. Max ${maxRequests} requests per ${windowMs / 1000} seconds`,
@@ -57,7 +57,7 @@ const payloadSizeValidator = (maxSize = 10 * 1024 * 1024) => { // 10MB por defec
     const contentLength = req.headers['content-length'];
     
     if (contentLength && parseInt(contentLength) > maxSize) {
-      console.log(`🚫 Payload too large: ${contentLength} bytes (max: ${maxSize})`);
+      console.log(`Payload too large: ${contentLength} bytes (max: ${maxSize})`);
       return res.status(413).json({
         error: 'Payload Too Large',
         message: `Request payload exceeds maximum size of ${maxSize} bytes`,
@@ -114,7 +114,7 @@ const suspiciousActivityLogger = (req, res, next) => {
   // Verificar patrones sospechosos
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(url) || pattern.test(userAgent)) {
-      console.warn('🚨 Suspicious activity detected:');
+      console.warn('Suspicious activity detected:');
       console.warn(`   IP: ${req.ip || req.connection.remoteAddress}`);
       console.warn(`   URL: ${url}`);
       console.warn(`   User-Agent: ${userAgent}`);
@@ -132,7 +132,7 @@ const suspiciousActivityLogger = (req, res, next) => {
 const methodValidator = (allowedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']) => {
   return (req, res, next) => {
     if (!allowedMethods.includes(req.method)) {
-      console.log(`🚫 Method not allowed: ${req.method}`);
+      console.log(`Method not allowed: ${req.method}`);
       return res.status(405).json({
         error: 'Method Not Allowed',
         message: `HTTP method ${req.method} is not allowed`,

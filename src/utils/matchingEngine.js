@@ -34,15 +34,15 @@ class MatchingEngine {
       // Retornar el mejor match si tiene score > 0
       const bestMatch = matchResults[0];
       if (bestMatch.score > 0) {
-        console.log(`✅ Best match found: ${bestMatch.mock.name} (score: ${bestMatch.score})`);
+        console.log(`Best match found: ${bestMatch.mock.name} (score: ${bestMatch.score})`);
         return bestMatch.mock;
       }
       
-      console.log('❌ No suitable mock found');
+      console.log('No suitable mock found');
       return null;
       
     } catch (error) {
-      console.error('❌ Error in findMatchingMocks:', error);
+      console.error('Error in findMatchingMocks:', error);
       return null;
     }
   }
@@ -69,7 +69,7 @@ class MatchingEngine {
       // 3. Evaluar headers requeridos
       const headerMatch = this.evaluateHeadersMatch(mock.headers, headers);
       if (!headerMatch.matches) {
-        console.log(`❌ Headers don't match for mock: ${mock.name}`);
+        console.log(`Headers don't match for mock: ${mock.name}`);
         return 0;
       }
       score += headerMatch.score;
@@ -77,7 +77,7 @@ class MatchingEngine {
       // 4. Evaluar parámetros de URL requeridos
       const urlParamsMatch = this.evaluateUrlParamsMatch(mock.urlParams, routeMatch.extractedParams);
       if (!urlParamsMatch.matches) {
-        console.log(`❌ URL params don't match for mock: ${mock.name}`);
+        console.log(`URL params don't match for mock: ${mock.name}`);
         return 0;
       }
       score += urlParamsMatch.score;
@@ -85,7 +85,7 @@ class MatchingEngine {
       // 5. Evaluar parámetros de body requeridos
       const bodyParamsMatch = this.evaluateBodyParamsMatch(mock.bodyParams, body);
       if (!bodyParamsMatch.matches) {
-        console.log(`❌ Body params don't match for mock: ${mock.name}`);
+        console.log(`Body params don't match for mock: ${mock.name}`);
         return 0;
       }
       score += bodyParamsMatch.score;
@@ -98,16 +98,16 @@ class MatchingEngine {
         urlParams: routeMatch.extractedParams
       });
       if (!conditionsMatch.matches) {
-        console.log(`❌ Conditions don't match for mock: ${mock.name}`);
+        console.log(`Conditions don't match for mock: ${mock.name}`);
         return 0;
       }
       score += conditionsMatch.score;
       
-      console.log(`📊 Mock "${mock.name}" score: ${score}`);
+      console.log(`Mock "${mock.name}" score: ${score}`);
       return score;
       
     } catch (error) {
-      console.error(`❌ Error calculating score for mock ${mock.name}:`, error);
+      console.error(`Error calculating score for mock ${mock.name}:`, error);
       return 0;
     }
   }
@@ -168,7 +168,7 @@ class MatchingEngine {
         const actualValue = requestHeaders[key.toLowerCase()] || requestHeaders[key];
         
         if (!actualValue) {
-          console.log(`❌ Missing required header: ${key}`);
+          console.log(`Missing required header: ${key}`);
           return { matches: false, score: 0 };
         }
         
@@ -185,11 +185,11 @@ class MatchingEngine {
           if (regex.test(actualValue)) {
             score += 8;
           } else {
-            console.log(`❌ Header ${key} doesn't match pattern: ${expectedValue}`);
+            console.log(`Header ${key} doesn't match pattern: ${expectedValue}`);
             return { matches: false, score: 0 };
           }
         } else {
-          console.log(`❌ Header ${key} doesn't match: expected ${expectedValue}, got ${actualValue}`);
+          console.log(`Header ${key} doesn't match: expected ${expectedValue}, got ${actualValue}`);
           return { matches: false, score: 0 };
         }
       }
@@ -217,7 +217,7 @@ class MatchingEngine {
         const actualValue = extractedParams[key];
         
         if (actualValue === undefined) {
-          console.log(`❌ Missing required URL param: ${key}`);
+          console.log(`Missing required URL param: ${key}`);
           return { matches: false, score: 0 };
         }
         
@@ -225,12 +225,12 @@ class MatchingEngine {
           score += 5;
         } else if (validation === 'number') {
           if (isNaN(actualValue)) {
-            console.log(`❌ URL param ${key} is not a number: ${actualValue}`);
+            console.log(`URL param ${key} is not a number: ${actualValue}`);
             return { matches: false, score: 0 };
           }
           score += 10;
         } else if (typeof validation === 'string' && validation !== actualValue) {
-          console.log(`❌ URL param ${key} doesn't match: expected ${validation}, got ${actualValue}`);
+          console.log(`URL param ${key} doesn't match: expected ${validation}, got ${actualValue}`);
           return { matches: false, score: 0 };
         } else {
           score += 5;
@@ -261,13 +261,13 @@ class MatchingEngine {
         
         if (validation === 'required') {
           if (actualValue === undefined || actualValue === null || actualValue === '') {
-            console.log(`❌ Missing required body param: ${key}`);
+            console.log(`Missing required body param: ${key}`);
             return { matches: false, score: 0 };
           }
           score += 10;
         } else if (typeof validation === 'string' && validation !== 'required') {
           if (actualValue !== validation) {
-            console.log(`❌ Body param ${key} doesn't match: expected ${validation}, got ${actualValue}`);
+            console.log(`Body param ${key} doesn't match: expected ${validation}, got ${actualValue}`);
             return { matches: false, score: 0 };
           }
           score += 15;
@@ -297,14 +297,14 @@ class MatchingEngine {
         const actualValue = this.getNestedValue(requestData, conditionPath);
         
         if (actualValue === undefined) {
-          console.log(`❌ Condition path not found: ${conditionPath}`);
+          console.log(`Condition path not found: ${conditionPath}`);
           return { matches: false, score: 0 };
         }
         
         if (expectedValue === actualValue) {
           score += 20;
         } else {
-          console.log(`❌ Condition doesn't match: ${conditionPath} = ${actualValue}, expected ${expectedValue}`);
+          console.log(`Condition doesn't match: ${conditionPath} = ${actualValue}, expected ${expectedValue}`);
           return { matches: false, score: 0 };
         }
       }

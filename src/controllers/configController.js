@@ -51,13 +51,13 @@ class ConfigController {
    */
   static async createMock(req, res) {
     try {
-      console.log('🆕 Creating new mock configuration...');
-      console.log('📦 Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Creating new mock configuration...');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
 
       // Validar datos de entrada
       const { error, value } = createMockSchema.validate(req.body);
       if (error) {
-        console.log('❌ Validation error:', error.details);
+        console.log('Validation error:', error.details);
         return res.status(400).json({
           error: 'Validation Error',
           message: 'Invalid mock configuration',
@@ -72,7 +72,7 @@ class ConfigController {
       // Verificar si ya existe un mock con la misma ruta y método
       const existingMocks = dbManager.findMocksByRouteAndMethod(value.route, value.method);
       if (existingMocks.length > 0) {
-        console.log('⚠️ Mock already exists for this route and method');
+        console.log('Mock already exists for this route and method');
         return res.status(409).json({
           error: 'Conflict',
           message: `A mock already exists for ${value.method} ${value.route}`,
@@ -83,7 +83,7 @@ class ConfigController {
 
       // Crear el mock
       const newMock = dbManager.createMock(value);
-      console.log('✅ Mock created successfully:', newMock.id);
+      console.log('Mock created successfully:', newMock.id);
 
       res.status(201).json({
         message: 'Mock configuration created successfully',
@@ -92,7 +92,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error creating mock:', error);
+      console.error('Error creating mock:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to create mock configuration',
@@ -108,13 +108,13 @@ class ConfigController {
    */
   static async listMocks(req, res) {
     try {
-      console.log('📋 Listing mock configurations...');
+      console.log('Listing mock configurations...');
       
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const enabled = req.query.enabled;
 
-      console.log(`📄 Pagination: page=${page}, limit=${limit}`);
+      console.log(`Pagination: page=${page}, limit=${limit}`);
 
       // Obtener mocks con paginación
       const result = dbManager.findAllMocks(page, limit);
@@ -127,7 +127,7 @@ class ConfigController {
         result.pagination.pages = Math.ceil(result.data.length / limit);
       }
 
-      console.log(`✅ Found ${result.data.length} mocks`);
+      console.log(`Found ${result.data.length} mocks`);
 
       res.json({
         message: 'Mock configurations retrieved successfully',
@@ -137,7 +137,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error listing mocks:', error);
+      console.error('Error listing mocks:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to retrieve mock configurations',
@@ -167,7 +167,7 @@ class ConfigController {
       const mock = dbManager.findMockById(mockId);
       
       if (!mock) {
-        console.log(`❌ Mock not found: ${mockId}`);
+        console.log(`Mock not found: ${mockId}`);
         return res.status(404).json({
           error: 'Not Found',
           message: `Mock with ID ${mockId} not found`,
@@ -175,7 +175,7 @@ class ConfigController {
         });
       }
 
-      console.log(`✅ Mock found: ${mock.name}`);
+      console.log(`Mock found: ${mock.name}`);
       res.json({
         message: 'Mock configuration retrieved successfully',
         mock: mock,
@@ -183,7 +183,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error getting mock by ID:', error);
+      console.error('Error getting mock by ID:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to retrieve mock configuration',
@@ -200,7 +200,7 @@ class ConfigController {
   static async updateMock(req, res) {
     try {
       const mockId = parseInt(req.params.id);
-      console.log(`🔄 Updating mock ID: ${mockId}`);
+      console.log(`Updating mock ID: ${mockId}`);
 
       if (isNaN(mockId)) {
         return res.status(400).json({
@@ -218,7 +218,7 @@ class ConfigController {
 
       const { error, value } = updateSchema.validate(req.body);
       if (error) {
-        console.log('❌ Validation error:', error.details);
+        console.log('Validation error:', error.details);
         return res.status(400).json({
           error: 'Validation Error',
           message: 'Invalid mock configuration',
@@ -233,7 +233,7 @@ class ConfigController {
       const updatedMock = dbManager.updateMock(mockId, value);
       
       if (!updatedMock) {
-        console.log(`❌ Mock not found for update: ${mockId}`);
+        console.log(`Mock not found for update: ${mockId}`);
         return res.status(404).json({
           error: 'Not Found',
           message: `Mock with ID ${mockId} not found`,
@@ -241,7 +241,7 @@ class ConfigController {
         });
       }
 
-      console.log(`✅ Mock updated successfully: ${mockId}`);
+      console.log(`Mock updated successfully: ${mockId}`);
       res.json({
         message: 'Mock configuration updated successfully',
         mock: updatedMock,
@@ -249,7 +249,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error updating mock:', error);
+      console.error('Error updating mock:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to update mock configuration',
@@ -266,7 +266,7 @@ class ConfigController {
   static async deleteMock(req, res) {
     try {
       const mockId = parseInt(req.params.id);
-      console.log(`🗑️ Deleting mock ID: ${mockId}`);
+      console.log(`Deleting mock ID: ${mockId}`);
 
       if (isNaN(mockId)) {
         return res.status(400).json({
@@ -279,7 +279,7 @@ class ConfigController {
       const deleted = dbManager.deleteMock(mockId);
       
       if (!deleted) {
-        console.log(`❌ Mock not found for deletion: ${mockId}`);
+        console.log(`Mock not found for deletion: ${mockId}`);
         return res.status(404).json({
           error: 'Not Found',
           message: `Mock with ID ${mockId} not found`,
@@ -287,7 +287,7 @@ class ConfigController {
         });
       }
 
-      console.log(`✅ Mock deleted successfully: ${mockId}`);
+      console.log(`Mock deleted successfully: ${mockId}`);
       res.json({
         message: 'Mock configuration deleted successfully',
         deletedId: mockId,
@@ -295,7 +295,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error deleting mock:', error);
+      console.error('Error deleting mock:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to delete mock configuration',
@@ -312,7 +312,7 @@ class ConfigController {
   static async toggleMock(req, res) {
     try {
       const mockId = parseInt(req.params.id);
-      console.log(`🔄 Toggling mock ID: ${mockId}`);
+      console.log(`Toggling mock ID: ${mockId}`);
 
       if (isNaN(mockId)) {
         return res.status(400).json({
@@ -333,7 +333,7 @@ class ConfigController {
 
       const updatedMock = dbManager.updateMock(mockId, { enabled: !mock.enabled });
       
-      console.log(`✅ Mock toggled: ${mockId} - enabled: ${updatedMock.enabled}`);
+      console.log(`Mock toggled: ${mockId} - enabled: ${updatedMock.enabled}`);
       res.json({
         message: `Mock ${updatedMock.enabled ? 'enabled' : 'disabled'} successfully`,
         mock: updatedMock,
@@ -341,7 +341,7 @@ class ConfigController {
       });
 
     } catch (error) {
-      console.error('❌ Error toggling mock:', error);
+      console.error('Error toggling mock:', error);
       res.status(500).json({
         error: 'Internal Server Error',
         message: 'Failed to toggle mock configuration',

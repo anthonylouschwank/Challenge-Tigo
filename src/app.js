@@ -60,7 +60,7 @@ app.get('/health', (req, res) => {
   try {
     console.log('🔍 Health check requested');
     const dbStats = dbManager.getStats();
-    console.log('📊 Database stats:', dbStats);
+    console.log('Database stats:', dbStats);
     
     res.status(200).json({
       status: 'OK',
@@ -71,7 +71,7 @@ app.get('/health', (req, res) => {
       database: dbStats
     });
   } catch (error) {
-    console.error('❌ Error in health check:', error);
+    console.error('Error in health check:', error);
     res.status(500).json({
       status: 'ERROR',
       message: 'Internal server error',
@@ -84,7 +84,7 @@ app.get('/health', (req, res) => {
 // Endpoint de información de la API
 app.get('/', (req, res) => {
   try {
-    console.log('🏠 Root endpoint requested');
+    console.log('Root endpoint requested');
     res.json({
       name: 'Mock API',
       version: '1.0.0',
@@ -99,7 +99,7 @@ app.get('/', (req, res) => {
       documentation: 'https://github.com/tu-usuario/mock-api'
     });
   } catch (error) {
-    console.error('❌ Error in root endpoint:', error);
+    console.error('Error in root endpoint:', error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: error.message,
@@ -158,11 +158,11 @@ app.use('*', (req, res, next) => {
   const isRootAndGet = req.originalUrl === '/' && req.method === 'GET';
   
   if (isConfigMockRoute || isTestRoute || isSystemPath || isRootAndGet) {
-    console.log(`❌ System route, returning 404: ${req.originalUrl}`);
+    console.log(`System route, returning 404: ${req.originalUrl}`);
     return middleware.notFoundHandler(req, res);
   }
   
-  console.log(`🎯 Sending to mock engine: ${req.method} ${req.originalUrl}`);
+  console.log(`Sending to mock engine: ${req.method} ${req.originalUrl}`);
   // Para todas las demás rutas, intentar encontrar un mock
   MockController.handleMockRequest(req, res);
 });
@@ -173,22 +173,22 @@ app.use(middleware.globalErrorHandler);
 
 // Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Mock API running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-  console.log(`📖 API info: http://localhost:${PORT}/`);
-  console.log(`💾 Database: ${dbManager.dbPath}`);
+  console.log(`Mock API running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
+  console.log(`API info: http://localhost:${PORT}/`);
+  console.log(`Database: ${dbManager.dbPath}`);
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-  console.log('🛑 Shutting down gracefully...');
+  console.log('Shutting down gracefully...');
   dbManager.close();
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('🛑 Shutting down gracefully...');
+  console.log('Shutting down gracefully...');
   dbManager.close();
   process.exit(0);
 });
