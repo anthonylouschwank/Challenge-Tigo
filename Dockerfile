@@ -18,7 +18,7 @@ RUN mkdir -p /app/database
 COPY package*.json ./
 
 # Instalar dependencias
-RUN npm install --omit=dev
+RUN npm install --only=production && npm cache clean --force
 
 # Copiar el resto del código fuente
 COPY . .
