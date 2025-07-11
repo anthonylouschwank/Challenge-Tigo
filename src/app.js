@@ -24,7 +24,7 @@ try {
 }
 
 // Middleware
-app.use(helmet()); // Seguridad básica
+app.use(helmet()); 
 app.use(cors()); // CORS para permitir requests desde cualquier origen
 app.use(morgan('combined')); // Logging de requests
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
@@ -108,7 +108,7 @@ app.get('/', (req, res) => {
   }
 });
 
-// Endpoint temporal para probar POST
+// Endpoint de prueba para probar POST
 app.post('/test', (req, res) => {
   res.json({
     message: 'POST request received successfully!',
@@ -118,7 +118,7 @@ app.post('/test', (req, res) => {
   });
 });
 
-// Endpoint temporal para probar diferentes métodos HTTP
+// Endpoint de prueba para diferentes métodos HTTP
 app.get('/test/:id', (req, res) => {
   res.json({
     message: 'GET request with parameter',
@@ -145,7 +145,6 @@ app.delete('/test/:id', (req, res) => {
   });
 });
 
-// IMPORTANTE: Este middleware debe ir DESPUÉS de todas las rutas del sistema
 // Intercepta TODAS las rutas que no son del sistema y las envía al motor de matching
 app.use('*', (req, res, next) => {
   console.log(`🔍 Checking route: ${req.method} ${req.originalUrl}`);
